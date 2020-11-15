@@ -53,8 +53,27 @@ public class SQLUtil {
 	 * @return Un arreglo con 7 números que indican el número de tuplas borradas en las tablas GUSTAN, SIRVEN, VISITAN, BEBIDA,
 	 * TIPOBEBIDA, BEBEDOR y BAR, respectivamente
 	 */
-	public int limpiarAforo (PersistenceManager pm)
+	public long [] limpiarAforo (PersistenceManager pm)
 	{
-		return 0;
+		Query qCarnet= pm.newQuery(SQL, "DELETE FROM " + pp.darSeqCarnet());          
+        Query qHorario = pm.newQuery(SQL, "DELETE FROM " + pp.darSeqHorario());
+        Query qLectorCC = pm.newQuery(SQL, "DELETE FROM " + pp.darSeqLectorCC());
+        Query qLectorEspacio = pm.newQuery(SQL, "DELETE FROM " + pp.darLectoresEspacio());
+        Query qEspacio = pm.newQuery(SQL, "DELETE FROM " + pp.darSeqEspacio());
+        Query qVisita = pm.newQuery(SQL, "DELETE FROM " + pp.darSeqVisita());
+        Query qVisitante = pm.newQuery(SQL, "DELETE FROM " + pp.darSeqVisitante());
+        Query qCentroComercial = pm.newQuery(SQL, "DELETE FROM " + pp.darSeqCC());
+
+        long carnetEliminados = (long) qCarnet.executeUnique ();
+        long horarioEliminados = (long) qHorario.executeUnique ();
+        long lectorCCEliminadas = (long) qLectorCC.executeUnique ();
+        long lectorEspacioEliminadas = (long) qLectorEspacio.executeUnique ();
+        long espacioEliminados = (long) qEspacio.executeUnique ();
+        long visitaEliminados = (long) qVisita.executeUnique ();
+        long visitanteEliminados = (long) qVisitante.executeUnique ();
+        long ccEliminados = (long) qCentroComercial.executeUnique ();
+        
+        return new long[] {carnetEliminados, horarioEliminados, lectorCCEliminadas, lectorEspacioEliminadas, 
+        		espacioEliminados, visitaEliminados, visitanteEliminados,ccEliminados};
 	}
 }

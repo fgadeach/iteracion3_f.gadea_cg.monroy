@@ -29,9 +29,9 @@ import negocio.Visitante;
 public class PersistenciaAforoCC {
 
 	private static PersistenciaAforoCC instance;
-	
+
 	private static Logger log = Logger.getLogger(PersistenciaAforoCC.class.getName());
-	
+
 	public final static String SQL = "javax.jdo.query.SQL";
 
 	private PersistenceManagerFactory pmf;
@@ -197,7 +197,7 @@ public class PersistenciaAforoCC {
 		log.trace ("Generando secuencia: " + resp);
 		return resp;
 	}
-	
+
 	private String darDetalleException(Exception e) 
 	{
 		String resp = "";
@@ -208,451 +208,573 @@ public class PersistenciaAforoCC {
 		}
 		return resp;
 	}
-	
+
 	/* ****************************************************************
 	 * 			Métodos para manejar los CARNET
 	 *****************************************************************/
-	
+
 	public Carnet adicionarCarnet(long idVisitante) 
 	{
 		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx=pm.currentTransaction();
-        try
-        {
-            tx.begin();            
-            long idcarnet = nextval ();
-            long tuplasInsertadas = sqlcarnet.adicionarCarnet(pm, idcarnet, idVisitante);
-            tx.commit();
-            
-            log.trace ("Inserción carnet: " + idcarnet + ": " + tuplasInsertadas + " tuplas insertadas");
-            return new Carnet (idcarnet, idVisitante);
-        }
-        catch (Exception e)
-        {
-//        	e.printStackTrace();
-        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
-        	return null;
-        }
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            pm.close();
-        }
+		Transaction tx=pm.currentTransaction();
+		try
+		{
+			tx.begin();            
+			long idcarnet = nextval ();
+			long tuplasInsertadas = sqlcarnet.adicionarCarnet(pm, idcarnet, idVisitante);
+			tx.commit();
+
+			log.trace ("Inserción carnet: " + idcarnet + ": " + tuplasInsertadas + " tuplas insertadas");
+			return new Carnet (idcarnet, idVisitante);
+		}
+		catch (Exception e)
+		{
+			//        	e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return null;
+		}
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}
 	}
-	
+
 	public long eliminarCarnetPorId (long id, long idVisitante) 
 	{
 		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx=pm.currentTransaction();
-        try
-        {
-            tx.begin();
-            long resp = sqlcarnet.eliminarCarnet(pm, id, idVisitante);
-            tx.commit();
-            return resp;
-        }
-        catch (Exception e)
-        {
-//        	e.printStackTrace();
-        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
-            return -1;
-        }
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            pm.close();
-        }
+		Transaction tx=pm.currentTransaction();
+		try
+		{
+			tx.begin();
+			long resp = sqlcarnet.eliminarCarnet(pm, id, idVisitante);
+			tx.commit();
+			return resp;
+		}
+		catch (Exception e)
+		{
+			//        	e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return -1;
+		}
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}
 	}
-	
+
 	public List<Carnet> darCarnets()
 	{
 		return sqlcarnet.darCarnets(pmf.getPersistenceManager());
 	}
- 
+
 	/* ****************************************************************
 	 * 			Métodos para manejar los Centro Comerciales
 	 *****************************************************************/
-	
+
 	public CentroComercial adicionarCC( String nombre, int aforo, long horario, int aforoAct, String estado) 
 	{
 		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx=pm.currentTransaction();
-        try
-        {
-            tx.begin();            
-            long id = nextval ();
-            long tuplasInsertadas = sqlCC.adicionarCentroComercial(pm, id, nombre, aforo, horario, aforoAct, estado);
-            tx.commit();
-            
-            log.trace ("Inserción del Centro Comercial: " + nombre + ": " + tuplasInsertadas + " tuplas insertadas");
-            return new CentroComercial (id, nombre, aforo, horario, aforoAct, estado);
-        }
-        catch (Exception e)
-        {
-//        	e.printStackTrace();
-        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
-        	return null;
-        }
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            pm.close();
-        }
+		Transaction tx=pm.currentTransaction();
+		try
+		{
+			tx.begin();            
+			long id = nextval ();
+			long tuplasInsertadas = sqlCC.adicionarCentroComercial(pm, id, nombre, aforo, horario, aforoAct, estado);
+			tx.commit();
+
+			log.trace ("Inserción del Centro Comercial: " + nombre + ": " + tuplasInsertadas + " tuplas insertadas");
+			return new CentroComercial (id, nombre, aforo, horario, aforoAct, estado);
+		}
+		catch (Exception e)
+		{
+			//        	e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return null;
+		}
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}
 	}
-	
+
 	public long eliminarCCPorId (long id) 
 	{
 		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx=pm.currentTransaction();
-        try
-        {
-            tx.begin();
-            long resp = sqlCC.eliminarCentroComercial(pm, id);
-            tx.commit();
-            return resp;
-        }
-        catch (Exception e)
-        {
-//        	e.printStackTrace();
-        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
-            return -1;
-        }
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            pm.close();
-        }
+		Transaction tx=pm.currentTransaction();
+		try
+		{
+			tx.begin();
+			long resp = sqlCC.eliminarCentroComercial(pm, id);
+			tx.commit();
+			return resp;
+		}
+		catch (Exception e)
+		{
+			//        	e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return -1;
+		}
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}
 	}
-	
+
 	public List<CentroComercial> darCCs()
 	{
 		return sqlCC.darCentroComerciales(pmf.getPersistenceManager());
 	}
-	
+
 	/* ****************************************************************
 	 * 			Métodos para manejar los ESPACIOS
 	 *****************************************************************/
-	
+
 	public Espacio adicionarEspacio( long icc, long idh, String nom, int amax, int aact, String t, String estado) 
 	{
 		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx=pm.currentTransaction();
-        try
-        {
-            tx.begin();            
-            long id = nextval ();
-            long tuplasInsertadas = sqlespacio.adicionarEspacio(pm, id, icc, idh, nom, amax, aact, t, estado);
-            tx.commit();
-            
-            log.trace ("Inserción del Espacio: " + nom + ": " + tuplasInsertadas + " tuplas insertadas");
-            return new Espacio(id, icc, idh, nom, amax, aact, t, estado);
-        }
-        catch (Exception e)
-        {
-//        	e.printStackTrace();
-        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
-        	return null;
-        }
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            pm.close();
-        }
+		Transaction tx=pm.currentTransaction();
+		try
+		{
+			tx.begin();            
+			long id = nextval ();
+			long tuplasInsertadas = sqlespacio.adicionarEspacio(pm, id, icc, idh, nom, amax, aact, t, estado);
+			tx.commit();
+
+			log.trace ("Inserción del Espacio: " + nom + ": " + tuplasInsertadas + " tuplas insertadas");
+			return new Espacio(id, icc, idh, nom, amax, aact, t, estado);
+		}
+		catch (Exception e)
+		{
+			//        	e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return null;
+		}
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}
 	}
-	
+
 	public long eliminarEspacioPorId (long id) 
 	{
 		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx=pm.currentTransaction();
-        try
-        {
-            tx.begin();
-            long resp = sqlespacio.eliminarEspacio(pm, id);
-            tx.commit();
-            return resp;
-        }
-        catch (Exception e)
-        {
-//        	e.printStackTrace();
-        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
-            return -1;
-        }
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            pm.close();
-        }
+		Transaction tx=pm.currentTransaction();
+		try
+		{
+			tx.begin();
+			long resp = sqlespacio.eliminarEspacio(pm, id);
+			tx.commit();
+			return resp;
+		}
+		catch (Exception e)
+		{
+			//        	e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return -1;
+		}
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}
 	}
-	
+
 	public List<Espacio> darEspacios()
 	{
 		return sqlespacio.darEspacios(pmf.getPersistenceManager());
 	}
-	
+
 	/* ****************************************************************
 	 * 			Métodos para manejar los Horarios
 	 *****************************************************************/
-	
+
 	public Horario adicionarHorario( Date d, Date da) 
 	{
 		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx=pm.currentTransaction();
-        try
-        {
-            tx.begin();            
-            long id = nextval ();
-            long tuplasInsertadas = sqlhorario.adicionarHorario(pm, id, d, da);
-            tx.commit();
-            
-            log.trace ("Inserción del Horario: " + id + ": " + tuplasInsertadas + " tuplas insertadas");
-            return new Horario(id, d, da);
-        }
-        catch (Exception e)
-        {
-//        	e.printStackTrace();
-        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
-        	return null;
-        }
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            pm.close();
-        }
+		Transaction tx=pm.currentTransaction();
+		try
+		{
+			tx.begin();            
+			long id = nextval ();
+			long tuplasInsertadas = sqlhorario.adicionarHorario(pm, id, d, da);
+			tx.commit();
+
+			log.trace ("Inserción del Horario: " + id + ": " + tuplasInsertadas + " tuplas insertadas");
+			return new Horario(id, d, da);
+		}
+		catch (Exception e)
+		{
+			//        	e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return null;
+		}
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}
 	}
-	
+
 	public long eliminarHorairoPorId (long id) 
 	{
 		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx=pm.currentTransaction();
-        try
-        {
-            tx.begin();
-            long resp = sqlhorario.eliminarHorario(pm, id);
-            tx.commit();
-            return resp;
-        }
-        catch (Exception e)
-        {
-//        	e.printStackTrace();
-        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
-            return -1;
-        }
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            pm.close();
-        }
+		Transaction tx=pm.currentTransaction();
+		try
+		{
+			tx.begin();
+			long resp = sqlhorario.eliminarHorario(pm, id);
+			tx.commit();
+			return resp;
+		}
+		catch (Exception e)
+		{
+			//        	e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return -1;
+		}
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}
 	}
-	
+
 	public List<Horario> darHorarios()
 	{
 		return sqlhorario.darHorarios(pmf.getPersistenceManager());
 	}
-	
+
 	/* ****************************************************************
 	 * 			Métodos para manejar los lectores
 	 *****************************************************************/
-	
+
 	public Lector adicionarLector( String espacio) 
 	{
 		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx=pm.currentTransaction();
-        try
-        {
-            tx.begin();            
-            long id = nextval ();
-            long tuplasInsertadas = sqllector.adicionarLector(pm, id, espacio);
-            tx.commit();
-            
-            log.trace ("Inserción del lector: " + id + ": " + tuplasInsertadas + " tuplas insertadas");
-            return new Lector(id, espacio);
-        }
-        catch (Exception e)
-        {
-//        	e.printStackTrace();
-        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
-        	return null;
-        }
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            pm.close();
-        }
+		Transaction tx=pm.currentTransaction();
+		try
+		{
+			tx.begin();            
+			long id = nextval ();
+			long tuplasInsertadas = sqllector.adicionarLector(pm, id, espacio);
+			tx.commit();
+
+			log.trace ("Inserción del lector: " + id + ": " + tuplasInsertadas + " tuplas insertadas");
+			return new Lector(id, espacio);
+		}
+		catch (Exception e)
+		{
+			//        	e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return null;
+		}
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}
 	}
-	
+
 	public long eliminarLectorPorId (long id) 
 	{
 		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx=pm.currentTransaction();
-        try
-        {
-            tx.begin();
-            long resp = sqllector.eliminarLector(pm, id);
-            tx.commit();
-            return resp;
-        }
-        catch (Exception e)
-        {
-//        	e.printStackTrace();
-        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
-            return -1;
-        }
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            pm.close();
-        }
+		Transaction tx=pm.currentTransaction();
+		try
+		{
+			tx.begin();
+			long resp = sqllector.eliminarLector(pm, id);
+			tx.commit();
+			return resp;
+		}
+		catch (Exception e)
+		{
+			//        	e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return -1;
+		}
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}
 	}
-	
+
 	public List<Lector> darLectores()
 	{
 		return sqllector.darLectors(pmf.getPersistenceManager());
 	}
-	
+
 	/* ****************************************************************
 	 * 			Métodos para manejar los lectores del Centro Comercial
 	 *****************************************************************/
-	
+
 	public LectorCC adicionarLectorCC( long id_lector, long id_cc) 
 	{
 		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx=pm.currentTransaction();
-        try
-        {
-            tx.begin();            
-            long tuplasInsertadas = sqllectorcc.adicionarLectorCC(pm, id_lector, id_cc);
-            tx.commit();
-            
-            log.trace ("Inserción del lector: " + id_lector + ": " + tuplasInsertadas + " tuplas insertadas");
-            return new LectorCC(id_lector, id_cc);
-        }
-        catch (Exception e)
-        {
-//        	e.printStackTrace();
-        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
-        	return null;
-        }
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            pm.close();
-        }
+		Transaction tx=pm.currentTransaction();
+		try
+		{
+			tx.begin();            
+			long tuplasInsertadas = sqllectorcc.adicionarLectorCC(pm, id_lector, id_cc);
+			tx.commit();
+
+			log.trace ("Inserción del lector: " + id_lector + ": " + tuplasInsertadas + " tuplas insertadas");
+			return new LectorCC(id_lector, id_cc);
+		}
+		catch (Exception e)
+		{
+			//        	e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return null;
+		}
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}
 	}
-	
+
 	public long eliminarLectorCCPorId (long id_lector) 
 	{
 		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx=pm.currentTransaction();
-        try
-        {
-            tx.begin();
-            long resp = sqllectorcc.eliminarLectorCC(pm, id_lector);
-            tx.commit();
-            return resp;
-        }
-        catch (Exception e)
-        {
-//        	e.printStackTrace();
-        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
-            return -1;
-        }
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            pm.close();
-        }
+		Transaction tx=pm.currentTransaction();
+		try
+		{
+			tx.begin();
+			long resp = sqllectorcc.eliminarLectorCC(pm, id_lector);
+			tx.commit();
+			return resp;
+		}
+		catch (Exception e)
+		{
+			//        	e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return -1;
+		}
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}
 	}
-	
+
 	public List<LectorCC> darLectoresCC()
 	{
 		return sqllectorcc.darLectorCCs(pmf.getPersistenceManager());
 	}
-	
+
 	/* ****************************************************************
 	 * 			Métodos para manejar los lectores un espacio
 	 *****************************************************************/
-	
+
 	public LectorEspacio adicionarLectorEspacio( long id_lector, long id_espacio) 
 	{
 		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx=pm.currentTransaction();
-        try
-        {
-            tx.begin();            
-            long tuplasInsertadas = sqllectorespacio.adicionarLectorEspacio(pm, id_lector, id_espacio);
-            tx.commit();
-            
-            log.trace ("Inserción del lector: " + id_lector + ": " + tuplasInsertadas + " tuplas insertadas");
-            return new LectorEspacio(id_lector, id_espacio);
-        }
-        catch (Exception e)
-        {
-//        	e.printStackTrace();
-        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
-        	return null;
-        }
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            pm.close();
-        }
+		Transaction tx=pm.currentTransaction();
+		try
+		{
+			tx.begin();            
+			long tuplasInsertadas = sqllectorespacio.adicionarLectorEspacio(pm, id_lector, id_espacio);
+			tx.commit();
+
+			log.trace ("Inserción del lector: " + id_lector + ": " + tuplasInsertadas + " tuplas insertadas");
+			return new LectorEspacio(id_lector, id_espacio);
+		}
+		catch (Exception e)
+		{
+			//        	e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return null;
+		}
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}
+	}
+
+	public long eliminarLectorEspacioPorId (long id_lector) 
+	{
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx=pm.currentTransaction();
+		try
+		{
+			tx.begin();
+			long resp = sqllectorespacio.eliminarLectorEspacio(pm, id_lector);
+			tx.commit();
+			return resp;
+		}
+		catch (Exception e)
+		{
+			//        	e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return -1;
+		}
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}
+	}
+
+	public List<LectorEspacio> darLectoresEspacio()
+	{
+		return sqllectorespacio.darLectorEspacios(pmf.getPersistenceManager());
+	}
+
+	/* ****************************************************************
+	 * 			Métodos para manejar las VISITAS
+	 *****************************************************************/
+
+	public Visita adicionarVisita( long id_visitante, long id_lector, Date FechaHoraEntrada, Date FechaHoraSalida) 
+	{
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx=pm.currentTransaction();
+		try
+		{
+			tx.begin();  
+			long tuplasInsertadas = sqlvisita.adicionarVisita(pm, id_visitante, id_lector, FechaHoraEntrada, FechaHoraSalida);
+			tx.commit();
+
+			log.trace ("Inserción de la visita: " + id_visitante + ": " + tuplasInsertadas + " tuplas insertadas");
+			return new Visita(id_visitante, id_lector, FechaHoraEntrada, FechaHoraSalida);
+		}
+		catch (Exception e)
+		{
+			//        	e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return null;
+		}
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}
+	}
+
+
+	public List<Visita> darVisitas()
+	{
+		return sqlvisita.darVisitas(pmf.getPersistenceManager());
+	}
+
+	/* ****************************************************************
+	 * 			Métodos para manejar los VISITANTES
+	 *****************************************************************/
+
+	public Visitante adicionarVisitante( String nombre, String tipo, int numTelefono, String correo, String nomContacto, int numContacto, String estado, double temperatura) 
+	{
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx=pm.currentTransaction();
+		try
+		{
+			tx.begin();            
+			long id = nextval ();
+			long tuplasInsertadas = sqlvisitante.adicionarVisitante(pm, id, nombre, tipo, numTelefono, correo, nomContacto, numContacto, estado, temperatura);
+			tx.commit();
+
+			log.trace ("Inserción del Horario: " + id + ": " + tuplasInsertadas + " tuplas insertadas");
+			return new Visitante(id, nombre, tipo, numTelefono, correo, nomContacto, numContacto, estado, temperatura);
+		}
+		catch (Exception e)
+		{
+			//        	e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return null;
+		}
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}
+	}
+
+
+
+	public List<Visitante> darVisitantes()
+	{
+		return sqlvisitante.darVisitantes(pmf.getPersistenceManager());
+	}
+
+	public Visitante darVisitantesPorId(long id)
+	{
+		return sqlvisitante.darVisitantePorIdVisitantente(pmf.getPersistenceManager(), id);
 	}
 	
-	public long eliminarLectorEspacioPorId (long id_lector) 
+	
+	
+	
+	
+	public long [] limpiarAforo ()
 	{
 		PersistenceManager pm = pmf.getPersistenceManager();
         Transaction tx=pm.currentTransaction();
         try
         {
             tx.begin();
-            long resp = sqllectorespacio.eliminarLectorEspacio(pm, id_lector);
-            tx.commit();
+            long [] resp = sqlUtil.limpiarAforo(pm);
+            tx.commit ();
+            log.info ("Borrada la base de datos");
             return resp;
         }
         catch (Exception e)
         {
 //        	e.printStackTrace();
         	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
-            return -1;
+        	return new long[] {-1, -1, -1, -1, -1, -1, -1};
         }
         finally
         {
@@ -662,95 +784,8 @@ public class PersistenciaAforoCC {
             }
             pm.close();
         }
-	}
-	
-	public List<LectorEspacio> darLectoresEspacio()
-	{
-		return sqllectorespacio.darLectorEspacios(pmf.getPersistenceManager());
-	}
-	
-	/* ****************************************************************
-	 * 			Métodos para manejar las VISITAS
-	 *****************************************************************/
-	
-	public Visita adicionarVisita( long id_visitante, long id_lector, Date FechaHoraEntrada, Date FechaHoraSalida) 
-	{
-		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx=pm.currentTransaction();
-        try
-        {
-            tx.begin();  
-            long tuplasInsertadas = sqlvisita.adicionarVisita(pm, id_visitante, id_lector, FechaHoraEntrada, FechaHoraSalida);
-            tx.commit();
-            
-            log.trace ("Inserción de la visita: " + id_visitante + ": " + tuplasInsertadas + " tuplas insertadas");
-            return new Visita(id_visitante, id_lector, FechaHoraEntrada, FechaHoraSalida);
-        }
-        catch (Exception e)
-        {
-//        	e.printStackTrace();
-        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
-        	return null;
-        }
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            pm.close();
-        }
-	}
-	
-	
-	public List<Visita> darVisitas()
-	{
-		return sqlvisita.darVisitas(pmf.getPersistenceManager());
-	}
-	
-	/* ****************************************************************
-	 * 			Métodos para manejar los VISITANTES
-	 *****************************************************************/
-	
-	public Visitante adicionarVisitante( String nombre, String tipo, int numTelefono, String correo, String nomContacto, int numContacto, String estado, double temperatura) 
-	{
-		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx=pm.currentTransaction();
-        try
-        {
-            tx.begin();            
-            long id = nextval ();
-            long tuplasInsertadas = sqlvisitante.adicionarVisitante(pm, id, nombre, tipo, numTelefono, correo, nomContacto, numContacto, estado, temperatura);
-            tx.commit();
-            
-            log.trace ("Inserción del Horario: " + id + ": " + tuplasInsertadas + " tuplas insertadas");
-            return new Visitante(id, nombre, tipo, numTelefono, correo, nomContacto, numContacto, estado, temperatura);
-        }
-        catch (Exception e)
-        {
-//        	e.printStackTrace();
-        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
-        	return null;
-        }
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            pm.close();
-        }
-	}
-	
-
-	
-	public List<Visitante> darVisitantes()
-	{
-		return sqlvisitante.darVisitantes(pmf.getPersistenceManager());
-	}
-	
-	public Visitante darVisitantesPorId(long id)
-	{
-		return sqlvisitante.darVisitantePorIdVisitantente(pmf.getPersistenceManager(), id);
+		
 	}
 }
+
+
